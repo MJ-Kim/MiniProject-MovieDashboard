@@ -6,7 +6,16 @@
 <body>
     <h1>Most Viewed Movies</h1>
 
-    <h1><a href="/most/dashboard">가장 많이 검색된 영화</a></h1>
+
+    <h1><a href="/most/dashboard">가장 많이 검색된 영화 대시보드</a></h1>
+    <form action="{% url 'most_view' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">크롤링 시작</button>
+    </form>
     <h1><a href="/popular/movie">플랫폼별 인기 영화</a></h1>
+    <form action="{% url 'most_view' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">크롤링 시작</button>
+    </form>
 </body>
 </html>
