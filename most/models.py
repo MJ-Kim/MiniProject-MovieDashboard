@@ -10,3 +10,4 @@ class MostMovie(models.Model):
     male_rating = models.FloatField("남성 평점")
     female_rating = models.FloatField("여성 평점")
     likes = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
