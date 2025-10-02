@@ -9,34 +9,34 @@ import json
 
 # Create your views here.
 def most_view(request):
-    # options = webdriver.ChromeOptions()
-    # options.add_argument("--headless=new")  # UI 안 보이게
-    # options.add_argument("--disable-blink-features=AutomationControlled")
-    # options.add_argument(
-    #     "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
-    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    # options.add_experimental_option("useAutomationExtension", False)
-    #
-    # driver = webdriver.Chrome(options=options)
-    #
-    # # webdriver 탐지 회피
-    # driver.execute_cdp_cmd(
-    #     "Page.addScriptToEvaluateOnNewDocument",
-    #     {"source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"}
-    # )
-    #
-    # href_list = click_other_genre()
-    # results = []
-    # for href in href_list:
-    #     movie_info = crawl_one_page(driver=driver, base_url=href)
-    #     results.append(movie_info)
-    #     time.sleep(random.uniform(1.5, 3.0))
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless=new")  # UI 안 보이게
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
+
+    driver = webdriver.Chrome(options=options)
+
+    # webdriver 탐지 회피
+    driver.execute_cdp_cmd(
+        "Page.addScriptToEvaluateOnNewDocument",
+        {"source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"}
+    )
+
+    href_list = click_other_genre()
+    results = []
+    for href in href_list:
+        movie_info = crawl_one_page(driver=driver, base_url=href)
+        results.append(movie_info)
+        time.sleep(random.uniform(1.5, 3.0))
     #
     # with open("results.json", "w", encoding="utf-8") as f:
     #     json.dump(results, f, ensure_ascii=False, indent=4)
 
-    with open("results.json", "r", encoding="utf-8") as f:
-        results = json.load(f)
+    # with open("results.json", "r", encoding="utf-8") as f:
+    #     results = json.load(f)
 
     results = list({m["title"]: m for m in results}.values())
 
