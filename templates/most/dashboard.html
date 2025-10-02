@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>영화 대시보드</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 2열 레이아웃 */
+      grid-auto-rows: 400px; /* 기본 행 높이 */
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .chart-box {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .chart-box canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* 평점 Top 15: 세로로 길게 (2행 차지) */
+    .tall {
+      grid-row: span 2;
+    }
+
+    /* 성별 평점 비교: 가로로 길게 (2열 차지) */
+    .wide {
+      grid-column: span 2;
+      height: 400px; /* 고정 높이 */
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center;">영화 대시보드</h1>
+
+  <div class="dashboard">
+    <!-- 장르 비율 -->
+    <div class="chart-box">
+      <h2>장르 비율</h2>
+      <canvas id="genreChart"></canvas>
+    </div>
+
+    <!-- 평점 Top 15 (세로 길게) -->
+    <div class="chart-box tall">
+      <h2>평점 Top 15</h2>
+      <canvas id="ratingChart"></canvas>
+    </div>
+
+    <!-- 성별 평점 비교 (가로 길게) -->
+    <div class="chart-box wide">
+      <h2>성별 평점 비교</h2>
+      <canvas id="genderChart"></canvas>
+    </div>
+
+    <!-- 성별 평점 차이 Top 5 -->
+    <div class="chart-box">
+      <h2>남녀 평점 차이 Top 5</h2>
+      <canvas id="diffChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const genres = {{ genres|safe }};
+    const genreCounts = {{ genre_counts|safe }};
+    const movieTitles = {{ movie_titles|safe }};
+    const movieRatings = {{ movie_ratings|safe }};
+    const maleTitles = {{ male_titles|safe }};
+    const maleRatings = {{ male_ratings|safe }};
+    const femaleRatings = {{ female_ratings|safe }};
+    const diffTitles = {{ diff_titles|safe }};
+    const diffValues = {{ diff_values|safe }};
+
+    const fixedOptions = { responsive: false, maintainAspectRatio: false };
+
+    // 장르 비율
+    new Chart(document.getElementById('genreChart'), {
+      type: 'pie',
+      data: {
+        labels: genres,
+        datasets: [{
+          data: genreCounts,
+          backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40']
+        }]
+      },
+      options: fixedOptions
+    });
+
+    // 평점 Top 15 (세로 긴 막대)
+    new Chart(document.getElementById('ratingChart'), {
+  type: 'bar',
+  data: {
+    labels: movieTitles,
+    datasets: [{
+      label: '평점',
+      data: movieRatings,
+      backgroundColor: '#36A2EB'
+    }]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 10,
+        ticks: {
+          font: {
+            size: 12   // X축 폰트 크기
+          }
+        }
+      },
+      y: {
+        ticks: {
+          font: {
+            size: 10   // Y축(영화 제목) 폰트 크기
+          }
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          font: {
+            size: 12   // 범례 폰트 크기
+          }
+        }
+      },
+      title: {
+        display: false
+      }
+    }
+  }
+});
+
+
+    // 성별 평점 비교 (가로로 넓게)
+    const genreLabels = {{ genre_labels|safe }};
+  const maleAvg = {{ male_avg|safe }};
+  const femaleAvg = {{ female_avg|safe }};
+
+  new Chart(document.getElementById('genderChart'), {
+    type: 'bar',
+    data: {
+      labels: genreLabels,
+      datasets: [
+        { label: '남자 평균 평점', data: maleAvg, backgroundColor: '#36A2EB' },
+        { label: '여자 평균 평점', data: femaleAvg, backgroundColor: '#FF6384' }
+      ]
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, max: 10 }
+      }
+    }
+  });
+
+    // 남녀 평점 차이 Top 5
+    new Chart(document.getElementById('diffChart'), {
+      type: 'bar',
+      data: {
+        labels: diffTitles,
+        datasets: [{
+          label: '평점 차이',
+          data: diffValues,
+          backgroundColor: '#FFCE56'
+        }]
+      },
+      options: {
+        ...fixedOptions,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  </script>
+</body>
+</html>

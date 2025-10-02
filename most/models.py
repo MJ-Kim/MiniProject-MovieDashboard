@@ -9,3 +9,4 @@ class MostMovie(models.Model):
     release_date = models.DateTimeField("출시 날짜")
     male_rating = models.FloatField("남성 평점")
     female_rating = models.FloatField("여성 평점")
+    likes = models.IntegerField(default=0)
