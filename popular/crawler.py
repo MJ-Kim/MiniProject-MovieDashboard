@@ -70,10 +70,9 @@ def fetch_movie_detail(driver, platform, url):
 
     # 개봉일 (문자열 → datetime 변환)
     try:
-        release_text = driver.find_element(
+        release_date = driver.find_element(
             By.CSS_SELECTOR, "#main_pack dl > div:nth-child(2) > dd"
         ).text.strip()
-        release_date = datetime.strptime(release_text, "%Y.%m.%d").date()
     except:
         release_date = None
 
@@ -153,4 +152,3 @@ def run_crawling():
 
     driver.quit()
     return all_results
-
