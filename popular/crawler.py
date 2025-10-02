@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
-import datetime
 from urllib.parse import urljoin
 
 # 1. 플랫폼명과 영화 url 수집 함수
