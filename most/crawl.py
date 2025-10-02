@@ -18,8 +18,8 @@ def crawl_one_genre():
     return hrefs
 
 
-def click_other_genre():
-    driver = webdriver.Chrome()
+def click_other_genre(driver):
+    # driver = webdriver.Chrome()
     base_url = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=%EC%98%81%ED%99%94+%EC%B6%94%EC%B2%9C&ackey=mr0r2yhn"
     driver.get(base_url)
     buttons = driver.find_elements(

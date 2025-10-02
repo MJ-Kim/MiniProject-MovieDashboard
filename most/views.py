@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from selenium import webdriver
 from collections import defaultdict
 from most.crawl import crawl_one_page, click_other_genre
@@ -25,18 +25,23 @@ def most_view(request):
         {"source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"}
     )
 
-    href_list = click_other_genre()
+    href_list = click_other_genre(driver)
     results = []
     for href in href_list:
         movie_info = crawl_one_page(driver=driver, base_url=href)
         results.append(movie_info)
         time.sleep(random.uniform(1.5, 3.0))
     #
-    # with open("results.json", "w", encoding="utf-8") as f:
-    #     json.dump(results, f, ensure_ascii=False, indent=4)
+    with open("results.json", "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=4)
 
-    # with open("results.json", "r", encoding="utf-8") as f:
-    #     results = json.load(f)
+    return redirect(f"/")
+
+
+
+def dashboard_view(request):
+    with open("results.json", "r", encoding="utf-8") as f:
+        results = json.load(f)
 
     results = list({m["title"]: m for m in results}.values())
 
