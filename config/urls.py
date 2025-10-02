@@ -17,9 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from config.views import index
 
 urlpatterns = [
+    path("", index),
     path("admin/", admin.site.urls),
     path("most/", include("most.urls")),
-    path("popular", include("popular.urls"))
+    path("popular/", include("popular.urls"))
 ]
