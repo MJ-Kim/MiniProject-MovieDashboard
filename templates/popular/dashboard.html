@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>플랫폼별 인기 영화 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+    <h1 class="text-center mb-4">🎬 플랫폼별 인기 영화 대시보드</h1>
+
+    <!-- 1행: 평점 TOP 10, 좋아요 TOP 10 -->
+    <div class="row">
+        <div class="col-md-6">
+            <h3>⭐ 평점 Top 10</h3>
+            <ul class="list-group">
+                {% for movie in top_rating %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ movie.title }}
+                        <span class="badge bg-primary">{{ movie.max_rating }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>👍 좋아요 Top 10</h3>
+            <ul class="list-group">
+                {% for movie in top_likes %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ movie.title }}
+                        <span class="badge bg-success">{{ movie.max_likes }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- 2행: 남성/여성 평점 -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>👨 남성 평점 Top 10</h3>
+            <ul class="list-group">
+                {% for movie in top_male %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ movie.title }}
+                        <span class="badge bg-info">{{ movie.max_rating }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>👩 여성 평점 Top 10</h3>
+            <ul class="list-group">
+                {% for movie in top_female %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ movie.title }}
+                        <span class="badge bg-danger">{{ movie.max_rating }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- 3행: 플랫폼별 장르 파이차트 -->
+    <div class="row mt-5">
+        <h3 class="text-center mb-3">🍿 플랫폼별 장르 분포</h3>
+        <div class="row">
+            {% for platform, genres in platform_genre_data.items %}
+                <div class="col-md-3">
+                    <canvas id="chart-{{ forloop.counter }}"></canvas>
+                    <p class="text-center mt-2"><strong>{{ platform }}</strong></p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        let chartCount = 1;
+        {% for platform, genres in platform_genre_data.items %}
+            let ctx{{ forloop.counter }} = document.getElementById("chart-{{ forloop.counter }}").getContext("2d");
+            new Chart(ctx{{ forloop.counter }}, {
+                type: "pie",
+                data: {
+                    labels: [{% for g, c in genres.items %}"{{ g }}",{% endfor %}],
+                    datasets: [{
+                        data: [{% for g, c in genres.items %}{{ c }},{% endfor %}],
+                        backgroundColor: [
+                            "#FF6384","#36A2EB","#FFCE56","#4BC0C0",
+                            "#9966FF","#FF9F40","#66FF66","#FF6699"
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "bottom" },
+                        title: { display: true, text: "{{ platform }} 장르 분포" }
+                    }
+                }
+            });
+        {% endfor %}
+    </script>
+</body>
+</html>

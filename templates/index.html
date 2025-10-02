@@ -12,8 +12,8 @@
         {% csrf_token %}
         <button type="submit">크롤링 시작</button>
     </form>
-    <h1><a href="/popular/movie">플랫폼별 인기 영화</a></h1>
-    <form action="{% url 'most_view' %}" method="post">
+    <h1><a href="/popular/dashboard">플랫폼별 인기 영화</a></h1>
+    <form action="{% url 'crawling_movies' %}" method="post">
         {% csrf_token %}
         <button type="submit">크롤링 시작</button>
     </form>

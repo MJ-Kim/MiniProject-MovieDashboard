@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.db.models.aggregates import Max
+from django.shortcuts import render, redirect
 from .models import MoviePopular
 from .crawler import run_crawling
 from datetime import datetime
 import re
+from collections import Counter
 
 # Create your views here.
 def crawling_movies(request):
@@ -33,11 +35,54 @@ def crawling_movies(request):
             },
         )
 
-    # 저장된 영화 리스트 (좋아요 순 정렬)
-    movies = MoviePopular.objects.all().order_by("-likes")
+    return redirect(f"/")
+
+def dashboard(request):
+    # 좋아요 순 Top 10
+    top_likes = (
+        MoviePopular.objects
+        .values("title")
+        .annotate(max_likes=Max("likes"))
+        .order_by("-max_likes")[:10]
+    )
+
+    # 평점 순 Top 10
+    top_rating = (
+        MoviePopular.objects
+        .values("title")
+        .annotate(max_rating=Max("rating"))
+        .order_by("-max_rating")[:10]
+    )
+
+    # 남성 평점 순 Top 10
+    top_male = (
+        MoviePopular.objects
+        .values("title")
+        .annotate(max_rating=Max("male_rating"))
+        .order_by("-max_rating")[:10]
+    )
+
+    # 여성 평점 순 Top 10
+    top_female = (
+        MoviePopular.objects
+        .values("title")
+        .annotate(max_rating=Max("female_rating"))
+        .order_by("-max_rating")[:10]
+    )
+
+    # 플랫폼별 장르 카운트
+    movies = MoviePopular.objects.all()
+    platform_genre_data = {}
+    for platform in movies.values_list("platform", flat=True).distinct():
+        genres = movies.filter(platform=platform).values_list("genre", flat=True)
+        genre_count = dict(Counter(genres))
+        platform_genre_data[platform] = genre_count
 
     context = {
-        'movies':movies
+        "top_likes": top_likes,
+        "top_rating": top_rating,
+        "top_male": top_male,
+        "top_female": top_female,
+        "platform_genre_data": platform_genre_data,
     }
-
-    return render(request, "popular/movies.html", context)
+    return render(request, "popular/dashboard.html", context)
